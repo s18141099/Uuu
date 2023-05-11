@@ -16,11 +16,11 @@ export class Staller {
         const url = new URL(req.url)
         const path = url.pathname
         const route = this.handlers.get(path)
-        if (!route) return this.getError("path", req, coninfo) || this.defaultError
+        if (!route) return this.getError("path", req, coninfo)
 
         const method: Method = req.method
         const handler = route.get(method)
-        if (!handler) return this.getError("method", req, coninfo) || this.defaultError
+        if (!handler) return this.getError("method", req, coninfo)
 
         const response = await handler(req, coninfo)
         if (this.headers.size > 0) this.headers.forEach((v, n) => response.headers.set(n, v))
