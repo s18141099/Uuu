@@ -3,8 +3,8 @@ import { Router, Handlers, Handler, Method, ErrorResponse } from "./index.d.ts"
 
 export class Staller {
     private defaultError = new Response("Internal Server Error", { status: 500 })
-    private errorhandler = new Map<string, Handler>()
-    private handlers: Router = new Map<ErrorResponse, Handlers>()
+    private errorhandler = new Map<ErrorResponse, Handler>()
+    private handlers: Router = new Map<string, Handlers>()
     private headers = new Map<string, string>()
 
     constructor() {
