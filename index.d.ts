@@ -1,5 +1,6 @@
 import { ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 
+type Route = string
 type Router = Map<string, Handlers>
 type Method = string | "GET" | "POST" | "PUT" | "DELETE"
 type Handlers = Map<Method, Handler>

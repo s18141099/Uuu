@@ -1,10 +1,10 @@
 import { serve, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
-import { Router, Handlers, Handler, Method, ErrorResponse } from "./index.d.ts"
+import { Route, Router, Handlers, Handler, Method, ErrorResponse } from "./index.d.ts"
 
-export class Staller {
+export class Alice {
     private defaultError = new Response("Internal Server Error", { status: 500 })
     private errorhandler = new Map<ErrorResponse, Handler>()
-    private handlers: Router = new Map<string, Handlers>()
+    private routers: Router = new Map<Route, Handlers>()
     private headers = new Map<string, string>()
 
     constructor() {
@@ -15,7 +15,7 @@ export class Staller {
     private router = async (req: Request, coninfo: ConnInfo): Promise<Response> => {
         const url = new URL(req.url)
         const path = url.pathname
-        const route = this.handlers.get(path)
+        const route = this.routers.get(path)
         if (!route) return this.getError("path", req, coninfo)
 
         const method: Method = req.method
@@ -31,21 +31,21 @@ export class Staller {
     setError = (errorResponse: ErrorResponse, handler: Handler) => this.errorhandler.set(errorResponse, handler)
 
     private getError = (errorResponse: ErrorResponse, req: Request, coninfo: ConnInfo) => {
-        const h = this.errorhandler.get(errorResponse)
-        if (!h) return this.defaultError
+        const error = this.errorhandler.get(errorResponse)
+        if (!error) return this.defaultError
 
-        return h(req, coninfo)
+        return error(req, coninfo)
     }
 
     setHeader = (name: string, value: string) => this.headers.set(name, value)
 
     set = (path: string, mehod: Method, handler: Handler) => {
-        const handlers = this.handlers.get(path)
+        const handlers = this.routers.get(path)
         if (handlers) return handlers.set(mehod, handler)
 
         const newHandlers: Handlers = new Map<string, Handler>()
         newHandlers.set(mehod, handler)
-        this.handlers.set(path, newHandlers)
+        this.routers.set(path, newHandlers)
     }
 
     async listen(options?: ServeInit) {
