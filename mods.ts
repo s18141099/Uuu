@@ -1,7 +1,7 @@
 import { serve, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 import { Route, Router, Handlers, Handler, Method, ErrorResponse } from "./index.d.ts"
 
-export class Alice {
+export default class Alice {
     private defaultError = new Response("Internal Server Error", { status: 500 })
     private errorhandler = new Map<ErrorResponse, Handler>()
     private routers: Router = new Map<Route, Handlers>()
