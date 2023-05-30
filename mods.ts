@@ -1,10 +1,10 @@
 import { serve, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
-import { Route, Router, Handlers, Handler, Method, ErrorResponse } from "./index.d.ts"
+import { Path, Route, Router, Handlers, Handler, Method, ErrorResponse } from "./index.d.ts"
 
 export default class Alice {
     private defaultError = new Response("Internal Server Error", { status: 500 })
     private errorhandler = new Map<ErrorResponse, Handler>()
-    private routers: Router = new Map<Route, Handlers>()
+    private routers: Router = new Map<Path, Handlers>()
     private headers = new Map<string, string>()
 
     constructor() {
@@ -39,16 +39,16 @@ export default class Alice {
 
     setHeader = (name: string, value: string) => this.headers.set(name, value)
 
-    set = (path: string, mehod: Method, handler: Handler): Alice => {
-        const handlers = this.routers.get(path)
+    set = (route: Route): Alice => {
+        const handlers = this.routers.get(route.path)
         if (handlers) {
-            handlers.set(mehod, handler)
+            handlers.set(route.method, route.handler)
             return this
         }
 
-        const newHandlers: Handlers = new Map<string, Handler>()
-        newHandlers.set(mehod, handler)
-        this.routers.set(path, newHandlers)
+        const newHandlers: Handlers = new Map<Method, Handler>()
+        newHandlers.set(route.method, route.handler)
+        this.routers.set(route.path, newHandlers)
 
         return this
     }
