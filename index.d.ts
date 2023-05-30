@@ -5,4 +5,4 @@ type Router = Map<string, Handlers>
 type Method = string | "GET" | "POST" | "PUT" | "DELETE"
 type Handlers = Map<Method, Handler>
 type Handler = (request: Request, conninfo: ConnInfo) => Response | Promise<Response>
-type ErrorResponse = "path" | "method"
+type ErrorResponse = string | number

@@ -1,26 +1,26 @@
 import { serve, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 import { Route, Router, Handlers, Handler, Method, ErrorResponse } from "./index.d.ts"
 
-export class Alice {
+export default class Alice {
     private defaultError = new Response("Internal Server Error", { status: 500 })
     private errorhandler = new Map<ErrorResponse, Handler>()
     private routers: Router = new Map<Route, Handlers>()
     private headers = new Map<string, string>()
 
     constructor() {
-        this.errorhandler.set("path", () => new Response("Not found", { status: 404 }))
-        this.errorhandler.set("method", () => new Response("Forbidden", { status: 403 }))
+        this.errorhandler.set(404, () => new Response("Not found", { status: 404 }))
+        this.errorhandler.set(403, () => new Response("Forbidden", { status: 403 }))
     }
 
     private router = async (req: Request, coninfo: ConnInfo): Promise<Response> => {
         const url = new URL(req.url)
         const path = url.pathname
         const route = this.routers.get(path)
-        if (!route) return this.getError("path", req, coninfo)
+        if (!route) return this.getError(404, req, coninfo)
 
         const method: Method = req.method
         const handler = route.get(method)
-        if (!handler) return this.getError("method", req, coninfo)
+        if (!handler) return this.getError(403, req, coninfo)
 
         const response = await handler(req, coninfo)
         if (this.headers.size > 0) this.headers.forEach((v, n) => response.headers.set(n, v))
@@ -30,22 +30,27 @@ export class Alice {
 
     setError = (errorResponse: ErrorResponse, handler: Handler) => this.errorhandler.set(errorResponse, handler)
 
-    private getError = (errorResponse: ErrorResponse, req: Request, coninfo: ConnInfo) => {
+    private getError = (errorResponse: ErrorResponse, req: Request, conninfo: ConnInfo) => {
         const error = this.errorhandler.get(errorResponse)
         if (!error) return this.defaultError
 
-        return error(req, coninfo)
+        return error(req, conninfo)
     }
 
     setHeader = (name: string, value: string) => this.headers.set(name, value)
 
-    set = (path: string, mehod: Method, handler: Handler) => {
+    set = (path: string, mehod: Method, handler: Handler): Alice => {
         const handlers = this.routers.get(path)
-        if (handlers) return handlers.set(mehod, handler)
+        if (handlers) {
+            handlers.set(mehod, handler)
+            return this
+        }
 
         const newHandlers: Handlers = new Map<string, Handler>()
         newHandlers.set(mehod, handler)
         this.routers.set(path, newHandlers)
+
+        return this
     }
 
     async listen(options?: ServeInit) {
