@@ -8,12 +8,13 @@ type Route = {
 }
 type Router = Map<Path, Handlers>
 type Method = string
-type Handlers = Map<Method, Handler>
 type Handler = (request: Request, conninfo: ConnInfo) => Response | Promise<Response>
+type Handlers = Map<Method, Handler>
 type Error = {
     status: ErrorStatus
     handler: Handler
 }
+type Errors = Map<ErrorStatus, Handler>
 type ErrorStatus = number
 type Header = {
     name: string

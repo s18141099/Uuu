@@ -2,10 +2,10 @@
  * Ulu is a TypeScript class that provides a simple and flexible router for handling HTTP requests.
  */
 import { serve, serveTls, ServeTlsInit, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
-import { Path, Route, Router, Handlers, Handler, Method, Error, ErrorStatus, Header } from "./index.d.ts"
+import { Path, Route, Router, Handlers, Handler, Method, Errors, Error, ErrorStatus, Header } from "./index.d.ts"
 
 export default class Ulu {
-    private errorHandler = new Map<ErrorStatus, Handler>()
+    private errorHandler: Errors = new Map<ErrorStatus, Handler>()
     private routers: Router = new Map<Path, Handlers>()
     private headers = new Map<string, string>()
 
@@ -91,7 +91,7 @@ export default class Ulu {
      * Starts listening for HTTP requests with the specified options.
      * @param options The server initialization options
      */
-    async listen(options?: ServeInit) {
+    async listen(options?: ServeInit): Promise<void> {
         await serve(this.router, options)
     }
 
@@ -99,7 +99,7 @@ export default class Ulu {
      * Starts listening for HTTPS requests with the specified options.
      * @param options The TLS server initialization options
      */
-    async listenTls(options: ServeTlsInit) {
+    async listenTls(options: ServeTlsInit): Promise<void> {
         await serveTls(this.router, options)
     }
 }
