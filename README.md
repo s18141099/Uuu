@@ -1,4 +1,4 @@
-# Ulu
+# Uu
 
 ## Usage
 
