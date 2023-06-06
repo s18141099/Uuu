@@ -1,12 +1,12 @@
 /**
- * Ulu is a TypeScript class that provides a simple and flexible router for handling HTTP requests.
+ * Ulu is a TypeScript class that provides a simple and flexible handlers for handling HTTP requests.
  */
 import { serve, serveTls, ServeTlsInit, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 import { Path, Route, Router, Handler, Handlers, Method, Error, ErrorStatus, Errors, Header } from "./index.d.ts"
 
 export default class Ulu {
     private errorHandler: Errors = new Map<ErrorStatus, Handler>()
-    private routers: Router = new Map<Path, Handlers>()
+    private routes: Router = new Map<Path, Handlers>()
     private headers = new Map<string, string>()
 
     /**
@@ -28,7 +28,7 @@ export default class Ulu {
     private router = async (req: Request, coninfo: ConnInfo): Promise<Response> => {
         const url = new URL(req.url)
         const path = url.pathname
-        const route = this.routers.get(path)
+        const route = this.routes.get(path)
         if (!route) {
             const errorHandler = this.getError(404)
             return errorHandler(req, coninfo)
@@ -74,15 +74,15 @@ export default class Ulu {
      */
     set = (route: Route): Ulu => {
         const method = route.method.toUpperCase()
-        const handlers = this.routers.get(route.path)
-        if (handlers) {
-            handlers.set(method, route.handler)
+        const routes = this.routes.get(route.path)
+        if (routes) {
+            routes.set(method, route.handler)
             return this
         }
 
         const newHandlers: Handlers = new Map<Method, Handler>()
         newHandlers.set(method, route.handler)
-        this.routers.set(route.path, newHandlers)
+        this.routes.set(route.path, newHandlers)
 
         return this
     }
