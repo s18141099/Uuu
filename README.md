@@ -11,16 +11,17 @@ const uuu = new Uuu();
 // Set up a route
 uuu
   .set({
-    path: "/hello",
+    path: "/",
     method: "GET",
     handler: (req, coninfo) => new Response("Hello!"),
-    header: { name: "X-Custom-Header", value: "Custom Value" },
   })
   .set({
     path: "/goodbye",
-    method: "GET",
+    method: "POST",
     handler: (req, coninfo) => new Response("GoodBye!"),
-    header: { name: "X-Custom-Header", value: "Custom Value" },
+    headers: [
+      { name: "X-Custom-Header", value: "Custom Value" },
+    ],
   });
 
 // Set an error handler
