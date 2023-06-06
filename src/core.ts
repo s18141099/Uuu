@@ -4,9 +4,9 @@
 import { Path, Route, Router, Handler, Handlers, Method, Error, ErrorStatus, Errors, Header } from "./index.d.ts"
 import { serve, serveTls, ServeTlsInit, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 
-export { Ulu }
+export { Uuu }
 
-class Ulu {
+class Uuu {
     private errorHandler: Errors = new Map<ErrorStatus, Handler>()
     private routes: Router = new Map<Path, Handlers>()
     private headers = new Map<string, string>()
@@ -74,7 +74,7 @@ class Ulu {
      * @param route The route configuration
      * @returns An instance of the Ulu class
      */
-    set = (route: Route): Ulu => {
+    set = (route: Route): Uuu => {
         const method = route.method.toUpperCase()
         const routes = this.routes.get(route.path)
         if (routes) {
