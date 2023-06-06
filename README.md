@@ -14,15 +14,14 @@ uuu
     path: "/hello",
     method: "GET",
     handler: (req, coninfo) => new Response("Hello!"),
+    header: { name: "X-Custom-Header", value: "Custom Value" },
   })
   .set({
     path: "/goodbye",
     method: "GET",
     handler: (req, coninfo) => new Response("GoodBye!"),
+    header: { name: "X-Custom-Header", value: "Custom Value" },
   });
-
-// Set custom headers
-uuu.setHeader({ name: "X-Custom-Header", value: "Custom Value" });
 
 // Set an error handler
 uuu.setError({

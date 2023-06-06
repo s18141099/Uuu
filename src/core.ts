@@ -1,15 +1,14 @@
 /**
  * Ulu is a TypeScript class that provides a simple and flexible handlers for handling HTTP requests.
  */
-import { Path, Route, Router, Handler, Handlers, Method, Error, ErrorStatus, Errors, Header } from "./index.d.ts"
+import { Path, Route, Routes, Router, Handler, Method, Error, ErrorStatus, Errors } from "./index.d.ts"
 import { serve, serveTls, ServeTlsInit, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 
 export { Uuu }
 
 class Uuu {
     private errorHandler: Errors = new Map<ErrorStatus, Handler>()
-    private routes: Router = new Map<Path, Handlers>()
-    private headers = new Map<string, string>()
+    private routes: Router = new Map<Path, Routes>()
 
     /**
      * Sets the default error handler for a specific error response.
@@ -30,21 +29,21 @@ class Uuu {
     private router = async (req: Request, coninfo: ConnInfo): Promise<Response> => {
         const url = new URL(req.url)
         const path = url.pathname
-        const route = this.routes.get(path)
-        if (!route) {
+        const routes = this.routes.get(path)
+        if (!routes) {
             const errorHandler = this.getError(404)
             return errorHandler(req, coninfo)
         }
 
         const method: Method = req.method
-        const handler = route.get(method)
-        if (!handler) {
+        const route = routes.get(method)
+        if (!route) {
             const errorHandler = this.getError(403)
             return errorHandler(req, coninfo)
         }
 
-        const response = await handler(req, coninfo)
-        if (this.headers.size > 0) this.headers.forEach((v, n) => response.headers.set(n, v))
+        const response = await route.handler(req, coninfo)
+        if (route.headers) route.headers.forEach((header) => response.headers.set(header.name, header.value))
 
         return response
     }
@@ -64,12 +63,6 @@ class Uuu {
     private getError = (errorResponse: ErrorStatus): Handler => this.errorHandler.get(errorResponse) || this.errorHandler.get(505) as Handler
 
     /**
-     * Sets a custom header to include in the response.
-     * @param header The header object
-     */
-    setHeader = (header: Header) => this.headers.set(header.name, header.value)
-
-    /**
      * Sets the route and its corresponding handler.
      * @param route The route configuration
      * @returns An instance of the Ulu class
@@ -78,13 +71,13 @@ class Uuu {
         const method = route.method.toUpperCase()
         const routes = this.routes.get(route.path)
         if (routes) {
-            routes.set(method, route.handler)
+            routes.set(method, route)
             return this
         }
 
-        const newHandlers: Handlers = new Map<Method, Handler>()
-        newHandlers.set(method, route.handler)
-        this.routes.set(route.path, newHandlers)
+        const newRoutes: Routes = new Map<Method, Route>()
+        newRoutes.set(method, route)
+        this.routes.set(route.path, newRoutes)
 
         return this
     }

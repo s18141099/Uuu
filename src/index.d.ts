@@ -5,11 +5,12 @@ type Route = {
     path: Path
     method: Method
     handler: Handler
+    headers?: Header[]
 }
-type Router = Map<Path, Handlers>
+type Router = Map<Path, Routes>
+type Routes = Map<Method, Route>
 type Method = string
 type Handler = (request: Request, conninfo: ConnInfo) => Response | Promise<Response>
-type Handlers = Map<Method, Handler>
 type Error = {
     status: ErrorStatus
     handler: Handler
