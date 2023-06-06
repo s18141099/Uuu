@@ -13,12 +13,12 @@ uuu
   .set({
     path: "/hello",
     method: "GET",
-    handler: (req, coninfo) => new Response("Hello, Ulu!"),
+    handler: (req, coninfo) => new Response("Hello!"),
   })
   .set({
     path: "/goodbye",
     method: "GET",
-    handler: (req, coninfo) => new Response("GoodBye, Ulu..."),
+    handler: (req, coninfo) => new Response("GoodBye!"),
   });
 
 // Set custom headers
