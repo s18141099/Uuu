@@ -5,7 +5,7 @@
 ```typescript
 import Uuu from "uuu";
 
-// Create an instance of Ulu
+// Create an instance of Uuu
 const uuu = new Uuu();
 
 // Set up a route
