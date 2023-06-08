@@ -25,7 +25,7 @@ uuu
   });
 
 // Set an error handler
-uuu.onError({
+uuu.setError({
   response: 404,
   handler: () => new Response("Custom Not Found", { status: 404 }),
 });

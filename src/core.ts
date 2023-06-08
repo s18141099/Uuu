@@ -1,5 +1,5 @@
 /**
- * Ulu is a TypeScript class that provides a simple and flexible handlers for handling HTTP requests.
+ * Uuu is a TypeScript class that provides a simple and flexible handlers for handling HTTP requests.
  */
 import { Path, Route, Routes, Router, Handler, Method, Error, ErrorStatus, Errors } from "./index.d.ts"
 import { serve, serveTls, ServeTlsInit, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
@@ -14,9 +14,9 @@ class Uuu {
      * Sets the default error handler for a specific error response.
      */
     constructor() {
-        this.errorHandler.set(505, () => new Response("Internal Server Error", { status: 500 }))
-        this.errorHandler.set(404, () => new Response("Not found", { status: 404 }))
-        this.errorHandler.set(403, () => new Response("Forbidden", { status: 403 }))
+        this.setError({ status: 500, handler: () => new Response("Internal Server Error", { status: 500 }) })
+        this.setError({ status: 404, handler: () => new Response("Not found", { status: 404 }) })
+        this.setError({ status: 403, handler: () => new Response("Forbidden", { status: 403 }) })
     }
 
     /**
@@ -52,7 +52,7 @@ class Uuu {
      * Sets a custom error handler for a specific error response.
      * @param error The error object
      */
-    onError = (error: Error): void => { this.errorHandler.set(error.status, error.handler) }
+    setError = (error: Error): void => { this.errorHandler.set(error.status, error.handler) }
 
     /**
      * Gets the appropriate error handler for an error response.
@@ -80,6 +80,25 @@ class Uuu {
         this.routes.set(route.path, newRoutes)
 
         return this
+    }
+
+    /**
+     * Display the set path and the corresponding method in the console.
+     */
+    showRoute = (): void => {
+        let log = `\n---------------------\n| Route and method. |\n---------------------\n`
+
+        const routeMap = this.routes
+        Array.from(routeMap.keys()).forEach(route => {
+            log += `\n● \x1b[34m${route}\x1b[0m\n`
+
+            const method = routeMap.get(route)!.keys()
+            Array.from(method).forEach((method) => {
+                log += `└----------${method}\n`
+            })
+        })
+
+        console.log(log)
     }
 
     /**
