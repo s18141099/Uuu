@@ -4,8 +4,8 @@ type Path = string
 type Route = {
     path: Path
     method: Method
-    handler: Handler
     headers?: Header[]
+    handler: Handler
 }
 type Router = Map<Path, Routes>
 type Routes = Map<Method, Route>

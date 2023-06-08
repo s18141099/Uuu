@@ -10,12 +10,12 @@ const uuu = new Uuu();
 
 // Set up a route
 uuu
-  .set({
+  .route({
     path: "/",
     method: "GET",
     handler: (req, coninfo) => new Response("Hello!"),
   })
-  .set({
+  .route({
     path: "/goodbye",
     method: "POST",
     handler: (req, coninfo) => new Response("GoodBye!"),
@@ -25,7 +25,7 @@ uuu
   });
 
 // Set an error handler
-uuu.setError({
+uuu.onError({
   response: 404,
   handler: () => new Response("Custom Not Found", { status: 404 }),
 });

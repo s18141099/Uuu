@@ -52,7 +52,7 @@ class Uuu {
      * Sets a custom error handler for a specific error response.
      * @param error The error object
      */
-    setError = (error: Error): void => { this.errorHandler.set(error.status, error.handler) }
+    onError = (error: Error): void => { this.errorHandler.set(error.status, error.handler) }
 
     /**
      * Gets the appropriate error handler for an error response.
@@ -67,7 +67,7 @@ class Uuu {
      * @param route The route configuration
      * @returns An instance of the Ulu class
      */
-    set = (route: Route): Uuu => {
+    route = (route: Route): Uuu => {
         const method = route.method.toUpperCase()
         const routes = this.routes.get(route.path)
         if (routes) {
