@@ -1,6 +1,6 @@
 import { ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 
-type Path = string
+type Path = "GET" | "POST" | "PUT" | "DELETE" | string
 type Route = {
     path: Path
     method: Method

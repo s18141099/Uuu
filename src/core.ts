@@ -7,8 +7,8 @@ import { serve, serveTls, ServeTlsInit, ServeInit, ConnInfo } from "https://deno
 export { Uuu }
 
 class Uuu {
-    private errorHandler: Errors = new Map<ErrorStatus, Handler>()
-    private routes: Router = new Map<Path, Routes>()
+    private errorsMap: Errors = new Map<ErrorStatus, Handler>()
+    private routesMap: Router = new Map<Path, Routes>()
 
     /**
      * Sets the default error handler for a specific error response.
@@ -29,17 +29,17 @@ class Uuu {
     private router = async (req: Request, coninfo: ConnInfo): Promise<Response> => {
         const url = new URL(req.url)
         const path = url.pathname
-        const routes = this.routes.get(path)
+        const routes = this.routesMap.get(path)
         if (!routes) {
-            const errorHandler = this.getError(404)
-            return errorHandler(req, coninfo)
+            const errors = this.getError(404)
+            return errors(req, coninfo)
         }
 
         const method: Method = req.method
         const route = routes.get(method)
         if (!route) {
-            const errorHandler = this.getError(403)
-            return errorHandler(req, coninfo)
+            const errors = this.getError(403)
+            return errors(req, coninfo)
         }
 
         const response = await route.handler(req, coninfo)
@@ -52,7 +52,7 @@ class Uuu {
      * Sets a custom error handler for a specific error response.
      * @param error The error object
      */
-    setError = (error: Error): void => { this.errorHandler.set(error.status, error.handler) }
+    setError = (error: Error): void => { this.errorsMap.set(error.status, error.handler) }
 
     /**
      * Gets the appropriate error handler for an error response.
@@ -60,7 +60,7 @@ class Uuu {
      * @param errorResponse The error response status code
      * @returns The error handler
      */
-    private getError = (errorResponse: ErrorStatus): Handler => this.errorHandler.get(errorResponse) || this.errorHandler.get(505) as Handler
+    private getError = (errorResponse: ErrorStatus): Handler => this.errorsMap.get(errorResponse) || this.errorsMap.get(505) as Handler
 
     /**
      * Sets the route and its corresponding handler.
@@ -69,7 +69,7 @@ class Uuu {
      */
     route = (route: Route): Uuu => {
         const method = route.method.toUpperCase()
-        const routes = this.routes.get(route.path)
+        const routes = this.routesMap.get(route.path)
         if (routes) {
             routes.set(method, route)
             return this
@@ -77,7 +77,7 @@ class Uuu {
 
         const newRoutes: Routes = new Map<Method, Route>()
         newRoutes.set(method, route)
-        this.routes.set(route.path, newRoutes)
+        this.routesMap.set(route.path, newRoutes)
 
         return this
     }
@@ -88,7 +88,7 @@ class Uuu {
     showRoute = (): void => {
         let log = `\n---------------------\n| Route and method. |\n---------------------\n`
 
-        const routeMap = this.routes
+        const routeMap = this.routesMap
         Array.from(routeMap.keys()).forEach(route => {
             log += `\n● \x1b[34m${route}\x1b[0m\n`
 
