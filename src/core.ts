@@ -1,11 +1,11 @@
-/**
- * Uuu is a TypeScript class that provides a simple and flexible handlers for handling HTTP requests.
- */
 import { Path, Route, Routes, Router, Handler, Method, Error, ErrorStatus, Errors } from "./index.d.ts"
 import { serve, serveTls, ServeTlsInit, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 
 export { Uuu }
 
+/**
+ * Uuu is a TypeScript class that provides a simple and flexible handlers for handling HTTP requests.
+ */
 class Uuu {
     private errorsMap: Errors = new Map<ErrorStatus, Handler>()
     private routesMap: Router = new Map<Path, Routes>()
