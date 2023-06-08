@@ -1,3 +1,5 @@
+export { mids }
+
 const mids = {
     setTemplate: async ({ path, values = {} }: { path: string, values?: Record<string, string> }): Promise<Uint8Array> => {
         const html: Uint8Array = await Deno.readFile(path)
@@ -10,5 +12,3 @@ const mids = {
         return new TextEncoder().encode(htmlText)
     }
 }
-
-export { mids }

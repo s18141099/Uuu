@@ -6,6 +6,7 @@ export { Uuu }
 /**
  * Uuu is a TypeScript class that provides a simple and flexible handlers for handling HTTP requests.
  */
+
 class Uuu {
     private errorsMap: Errors = new Map<ErrorStatus, Handler>()
     private routesMap: Router = new Map<Path, Routes>()
@@ -117,4 +118,3 @@ class Uuu {
         await serveTls(this.router, options)
     }
 }
-
