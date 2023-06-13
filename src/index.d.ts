@@ -4,7 +4,7 @@ type Path = "GET" | "POST" | "PUT" | "DELETE" | string
 type Route = {
     path: Path
     method: Method
-    headers?: Header[]
+    headers?: Header
     handler: Handler
 }
 type Router = Map<Path, Routes>
@@ -18,6 +18,10 @@ type Error = {
 type Errors = Map<ErrorStatus, Handler>
 type ErrorStatus = number
 type Header = {
-    name: string
-    value: string
+    [p: string]: string
+}
+type Options = {
+    path: Path
+    headers?: Header
+    handler: Handler
 }

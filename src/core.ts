@@ -1,4 +1,4 @@
-import { Path, Route, Routes, Router, Handler, Method, Error, ErrorStatus, Errors } from "./index.d.ts"
+import { Path, Route, Routes, Router, Handler, Method, Error, ErrorStatus, Errors, Options } from "./index.d.ts"
 import { serve, serveTls, ServeTlsInit, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 
 export { Uuu }
@@ -44,7 +44,7 @@ class Uuu {
         }
 
         const response = await route.handler(req, coninfo)
-        if (route.headers) route.headers.forEach((header) => response.headers.set(header.name, header.value))
+        if (route.headers) Object.keys(route.headers).forEach((k) => response.headers.set(k, route.headers![k]))
 
         return response
     }
@@ -86,7 +86,7 @@ class Uuu {
     /**
      * Display the set path and the corresponding method in the console.
      */
-    showRoute = (): void => {
+    routes = (): void => {
         let log = `\n---------------------\n| Route and method. |\n---------------------\n`
 
         const routeMap = this.routesMap
@@ -95,11 +95,20 @@ class Uuu {
 
             const method = routeMap.get(route)!.keys()
             Array.from(method).forEach((method) => {
-                log += `└----------${method}\n`
+                log += `└---------- ${method}\n`
             })
         })
 
         console.log(log)
+    }
+
+    options = (options: Options) => {
+        this.route({
+            path: options.path,
+            method: "OPTIONS",
+            headers: options.headers,
+            handler: options.handler
+        })
     }
 
     /**
@@ -107,6 +116,7 @@ class Uuu {
      * @param options The server initialization options
      */
     async listen(options?: ServeInit): Promise<void> {
+        this.routes()
         await serve(this.router, options)
     }
 
