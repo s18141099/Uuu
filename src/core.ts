@@ -90,7 +90,7 @@ class Uuu {
 
             const method = routeMap.get(route)!.methods
             Array.from(method).forEach((method) => {
-                log += `└---------- ${method}\n`
+                log += `└---------- ${method[0]}\n`
             })
         })
 
@@ -102,6 +102,7 @@ class Uuu {
      * @param options The server initialization options
      */
     async listen(options?: ServeInit): Promise<void> {
+        this.debug()
         await serve(this.router, options)
     }
 
@@ -110,6 +111,7 @@ class Uuu {
      * @param options The TLS server initialization options
      */
     async listenTls(options: ServeTlsInit): Promise<void> {
+        this.debug()
         await serveTls(this.router, options)
     }
 }

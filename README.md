@@ -8,20 +8,49 @@ import Uuu from "uuu";
 // Create an instance of Uuu
 const uuu = new Uuu();
 
+const headers = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "*",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
 // Set up a route
 uuu
-  .route({
-    path: "/",
-    method: "GET",
-    handler: (req, coninfo) => new Response("Hello!"),
+  .route({ path: "/" })
+  .on({
+    method: "OPTIONS",
+    headers: headers,
+    handler: () => {
+      return new Response("OPTIONS");
+    },
   })
-  .route({
-    path: "/goodbye",
+  .on({
+    method: "GET",
+    headers: headers,
+    handler: () => {
+      return new Response("GET");
+    },
+  })
+  .on({
     method: "POST",
-    handler: (req, coninfo) => new Response("GoodBye!"),
-    headers: [
-      { name: "X-Custom-Header", value: "Custom Value" },
-    ],
+    headers: headers,
+    handler: () => {
+      return new Response("POST");
+    },
+  })
+  .on({
+    method: "PUT",
+    headers: headers,
+    handler: () => {
+      return new Response("PUT");
+    },
+  })
+  .on({
+    method: "DELETE",
+    headers: headers,
+    handler: () => {
+      return new Response("DELETE");
+    },
   });
 
 // Set an error handler
