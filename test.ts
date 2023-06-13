@@ -1,21 +1,45 @@
 import { Uuu } from "./mods.ts"
 
-// Create an instance of Uuu
-const uuu = new Uuu()
+const app = new Uuu()
 
-// Set up a route
-uuu
+const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "*",
+    "Access-Control-Allow-Headers": "Content-Type"
+}
+
+app
     .route({ path: "/" })
     .on({
+        method: "OPTIONS",
+        headers: headers,
+        handler: () => {
+            return new Response("OPTIONS")
+        }
+    })
+    .on({
         method: "GET",
-        headers: { "X-Custom-Header": "Custom Value" },
-        handler: () => new Response("Hello!"),
+        headers: headers,
+        handler: () => {
+            // console.log("GET")
+            return new Response("GET")
+        }
     })
     .on({
         method: "POST",
-        headers: { "X-Custom-Header": "Custom Value" },
-        handler: () => new Response("GoodBye!"),
+        headers: headers,
+        handler: () => {
+            // console.log("POST")
+            return new Response("POST")
+        }
+    })
+    .on({
+        method: "PUT",
+        headers: headers,
+        handler: () => {
+            // console.log("PUT")
+            return new Response("PUT")
+        }
     })
 
-// Start listening for requests
-uuu.listen({ port: 8000 })
+app.listen()

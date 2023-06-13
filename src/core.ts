@@ -1,4 +1,4 @@
-import { Path, Config, Route, Routes, Router, Handler, Method, Error, Status, Errors, Options } from "./index.d.ts"
+import { Path, Config, Route, Handler, Method, Error, Errors, Status } from "./index.d.ts"
 import { serve, serveTls, ServeTlsInit, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 
 export { Uuu }
@@ -81,7 +81,7 @@ class Uuu {
     /**
      * Display the set path and the corresponding method in the console.
      */
-    showRoutes = (): void => {
+    debug = (): void => {
         let log = `\n---------------------\n| Route and method. |\n---------------------\n`
 
         const routeMap = this.routes

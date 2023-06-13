@@ -1,7 +1,9 @@
 import { ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 
 type Path = string
-type Route = { path: Path }
+type Route = {
+    path: Path
+}
 type Config = {
     method: Method
     headers?: Header
@@ -22,6 +24,6 @@ type Header = {
 }
 type Options = {
     path: Path
-    headers?: Header
-    handler: Handler
+    headers: Header
+    handler?: Handler
 }
