@@ -1,4 +1,4 @@
-import { Path, Route, Routes, Router, Handler, Method, Error, ErrorStatus, Errors, Options } from "./index.d.ts"
+import { Path, Config, Route, Routes, Router, Handler, Method, Error, Status, Errors, Options } from "./index.d.ts"
 import { serve, serveTls, ServeTlsInit, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 
 export { Uuu }
@@ -8,8 +8,8 @@ export { Uuu }
  */
 
 class Uuu {
-    private errorsMap: Errors = new Map<ErrorStatus, Handler>()
-    private routesMap: Router = new Map<Path, Routes>()
+    private errors: Errors = new Map<Status, Handler>()
+    private routes = new Map<Path, On>()
 
     /**
      * Sets the default error handler for a specific error response.
@@ -30,14 +30,14 @@ class Uuu {
     private router = async (req: Request, coninfo: ConnInfo): Promise<Response> => {
         const url = new URL(req.url)
         const path = url.pathname
-        const routes = this.routesMap.get(path)
-        if (!routes) {
+        const on = this.routes.get(path)
+        if (!on) {
             const errors = this.getError(404)
             return errors(req, coninfo)
         }
 
         const method: Method = req.method
-        const route = routes.get(method)
+        const route = on.methods.get(method)
         if (!route) {
             const errors = this.getError(403)
             return errors(req, coninfo)
@@ -53,7 +53,7 @@ class Uuu {
      * Sets a custom error handler for a specific error response.
      * @param error The error object
      */
-    setError = (error: Error): void => { this.errorsMap.set(error.status, error.handler) }
+    setError = (error: Error): void => { this.errors.set(error.status, error.handler) }
 
     /**
      * Gets the appropriate error handler for an error response.
@@ -61,39 +61,34 @@ class Uuu {
      * @param errorResponse The error response status code
      * @returns The error handler
      */
-    private getError = (errorResponse: ErrorStatus): Handler => this.errorsMap.get(errorResponse) || this.errorsMap.get(505) as Handler
+    private getError = (errorResponse: Status): Handler => this.errors.get(errorResponse) || this.errors.get(505) as Handler
 
     /**
      * Sets the route and its corresponding handler.
      * @param route The route configuration
      * @returns An instance of the Ulu class
      */
-    route = (route: Route): Uuu => {
-        const method = route.method.toUpperCase()
-        const routes = this.routesMap.get(route.path)
-        if (routes) {
-            routes.set(method, route)
-            return this
-        }
+    route = (route: Route): On => {
+        const methods = this.routes.get(route.path)
+        if (methods) return methods
 
-        const newRoutes: Routes = new Map<Method, Route>()
-        newRoutes.set(method, route)
-        this.routesMap.set(route.path, newRoutes)
+        const on: On = new On()
+        this.routes.set(route.path, on)
 
-        return this
+        return on
     }
 
     /**
      * Display the set path and the corresponding method in the console.
      */
-    routes = (): void => {
+    showRoutes = (): void => {
         let log = `\n---------------------\n| Route and method. |\n---------------------\n`
 
-        const routeMap = this.routesMap
+        const routeMap = this.routes
         Array.from(routeMap.keys()).forEach(route => {
             log += `\n● \x1b[34m${route}\x1b[0m\n`
 
-            const method = routeMap.get(route)!.keys()
+            const method = routeMap.get(route)!.methods
             Array.from(method).forEach((method) => {
                 log += `└---------- ${method}\n`
             })
@@ -102,21 +97,11 @@ class Uuu {
         console.log(log)
     }
 
-    options = (options: Options) => {
-        this.route({
-            path: options.path,
-            method: "OPTIONS",
-            headers: options.headers,
-            handler: options.handler
-        })
-    }
-
     /**
      * Starts listening for HTTP requests with the specified options.
      * @param options The server initialization options
      */
     async listen(options?: ServeInit): Promise<void> {
-        this.routes()
         await serve(this.router, options)
     }
 
@@ -126,5 +111,16 @@ class Uuu {
      */
     async listenTls(options: ServeTlsInit): Promise<void> {
         await serveTls(this.router, options)
+    }
+}
+
+class On {
+    methods = new Map<Method, Config>()
+
+    on = (config: Config) => {
+        const method = config.method.toUpperCase()
+        this.methods.set(method, config)
+
+        return this
     }
 }
