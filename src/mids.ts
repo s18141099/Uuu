@@ -1,8 +1,8 @@
 export { mids }
 
 const mids = {
-    genTemplate: async ({ path, values = {} }: { path: string, values?: Record<string, string> }): Promise<Uint8Array> => {
-        const html: Uint8Array = await Deno.readFile(path)
+    genTemplate: ({ path, values = {} }: { path: string, values?: Record<string, string> }): Uint8Array => {
+        const html: Uint8Array = Deno.readFileSync(path)
 
         let htmlText: string = new TextDecoder().decode(html)
         Object.keys(values).forEach(key => {

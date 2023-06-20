@@ -16,7 +16,7 @@ export default class {
         this.setError({ status: 500, handler: () => new Response("Internal Server Error", { status: 500 }) })
         this.setError({ status: 404, handler: () => new Response("Not found", { status: 404 }) })
         this.setError({ status: 403, handler: () => new Response("Forbidden", { status: 403 }) })
-        this.setError({ status: 401, handler: () => new Response("Bad Request", { status: 403 }) })
+        this.setError({ status: 400, handler: () => new Response("Bad Request", { status: 400 }) })
     }
 
     /**
