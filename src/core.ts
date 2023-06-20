@@ -1,13 +1,11 @@
 import { Path, Config, Route, Handler, Method, Error, Errors, Status } from "./index.d.ts"
 import { serve, serveTls, ServeTlsInit, ServeInit, ConnInfo } from "https://deno.land/std@0.186.0/http/server.ts"
 
-export { Uuu }
-
 /**
  * Uuu is a TypeScript class that provides a simple and flexible handlers for handling HTTP requests.
  */
 
-class Uuu {
+export default class {
     private errors: Errors = new Map<Status, Handler>()
     private routes = new Map<Path, On>()
 
@@ -18,6 +16,7 @@ class Uuu {
         this.setError({ status: 500, handler: () => new Response("Internal Server Error", { status: 500 }) })
         this.setError({ status: 404, handler: () => new Response("Not found", { status: 404 }) })
         this.setError({ status: 403, handler: () => new Response("Forbidden", { status: 403 }) })
+        this.setError({ status: 401, handler: () => new Response("Bad Request", { status: 403 }) })
     }
 
     /**
@@ -32,15 +31,15 @@ class Uuu {
         const path = url.pathname
         const on = this.routes.get(path)
         if (!on) {
-            const errors = this.getError(404)
-            return errors(req, coninfo)
+            const error = this.error(404)
+            return error(req, coninfo)
         }
 
         const method: Method = req.method
         const route = on.methods.get(method)
         if (!route) {
-            const errors = this.getError(403)
-            return errors(req, coninfo)
+            const error = this.error(403)
+            return error(req, coninfo)
         }
 
         const response = await route.handler(req, coninfo)
@@ -61,7 +60,7 @@ class Uuu {
      * @param errorResponse The error response status code
      * @returns The error handler
      */
-    private getError = (errorResponse: Status): Handler => this.errors.get(errorResponse) || this.errors.get(505) as Handler
+    error = (errorResponse: Status): Handler => this.errors.get(errorResponse) || this.errors.get(505) as Handler
 
     /**
      * Sets the route and its corresponding handler.
@@ -82,7 +81,7 @@ class Uuu {
      * Display the set path and the corresponding method in the console.
      */
     debug = (): void => {
-        let log = `\n---------------------\n| Route and method. |\n---------------------\n`
+        let log = ""
 
         const routeMap = this.routes
         Array.from(routeMap.keys()).forEach(route => {

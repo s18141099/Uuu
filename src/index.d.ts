@@ -12,7 +12,7 @@ type Config = {
 type Router = Map<Path, Routes>
 type Routes = Map<Method, Route>
 type Method = "GET" | "POST" | "PUT" | "DELETE" | string
-type Handler = (request: Request, conninfo: ConnInfo) => Response | Promise<Response>
+type Handler = (request: Request, conninfo?: ConnInfo) => Response | Promise<Response>
 type Error = {
     status: Status
     handler: Handler
