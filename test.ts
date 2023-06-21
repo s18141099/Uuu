@@ -8,8 +8,7 @@ const headers = {
     "Access-Control-Allow-Headers": "Content-Type"
 }
 
-app
-    .route({ path: "/" })
+app.route({ path: "/" })
     .on({
         method: "OPTIONS",
         headers: headers,
