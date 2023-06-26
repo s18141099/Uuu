@@ -60,7 +60,7 @@ export default class {
      * @param errorResponse The error response status code
      * @returns The error handler
      */
-    error = (errorResponse: Status): Handler => this.errors.get(errorResponse) || this.errors.get(505) as Handler
+    error = (errorResponse: Status): Handler => this.errors.get(errorResponse) || this.errors.get(500) as Handler
 
     /**
      * Sets the route and its corresponding handler.
